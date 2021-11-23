@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Months Page</title>
+</head>
+<body>
+    <ul>
+
+        {% for elem in months %}
+
+            <li><a href="{% url 'month-challenge' month=elem %}">{{elem | title}}</a></li> {% comment %} month from urls.py => <str:month> {% endcomment %}
+        
+        {% endfor %}
+    
+    </ul>
+</body>
+</html>

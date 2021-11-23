@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse , HttpResponseNotFound , HttpResponseRedirect
 from django.urls import reverse
+# from django.template.loader import render_to_string # old mehtod
 
 monthly_challenges = {
     "january": "Eat no meat for the entire month!",
@@ -20,13 +21,12 @@ monthly_challenges = {
 # Create your views here.
 
 def index(req):
-   li_str = ""
-   months_list = [*monthly_challenges]
-   for month in months_list:
-      href = reverse("month-challenge",args=[month])
-      li_str += f"<li><a href=\"{month}\">{month.capitalize()}</a></li>"
-   res = f"<ul>{li_str}</ul>"
-   return HttpResponse(res)
+   months = [*monthly_challenges]
+   return render(req,"challenges/index.html",{
+      "months" : months
+   })
+   
+   
 
 
 
@@ -44,36 +44,23 @@ def numaric_handler(request,month): #my logic lesson 22 (modren one)
       return HttpResponseRedirect(output)
 
 
-# def monthly_challenge_by_number(request, month): #old solution from lesson 23
-#     months = list(monthly_challenges.keys())
-
-#     if month > len(months):
-#         return HttpResponseNotFound("Invalid month")
-
-#     redirect_month = months[month - 1]
-#     redirect_path = reverse("month-challenge",args=[redirect_month])  # /challenge/january
-#     return HttpResponseRedirect(redirect_path)
 
 
-#from lesson 20
-# def months_handler(req,month):
-#    get_month = None
-#    if(month == "jan"):
-#       get_month = f"Hello from {month}"
-#    elif(month == "feb"):
-#       get_month = f"Hello from {month}"
-#    elif(month == "mar"):
-#       get_month = f"Hello from {month}"
-#    else:
-#       return HttpResponseNotFound("this month not found")
-#    return HttpResponse(get_month)
+
+
 
 def months_handler(req,month):
-   try:
-      path = reverse("challenge-home")
-      response_data = f"""<h1>{monthly_challenges[month]}</h1>
-      <a href=\"{path}\">back to home</a>
-      """
-      return HttpResponse(response_data)
-   except:
-      return HttpResponseNotFound("<h1>This month is not supported!</h1>")
+
+   #old mehtod for static
+   # response_data = render_to_string("challenges/index.html",{text: anything you want}) 
+   # return HttpResponse(response_data)
+
+   
+   
+   return render(req,"challenges/month.html",{
+      "text" : monthly_challenges[month],
+      # "month": month.capitalize(), #instead of using it like this we can use title filter which is refere to DTL in HTML file
+      
+      "month":month
+   })
+
