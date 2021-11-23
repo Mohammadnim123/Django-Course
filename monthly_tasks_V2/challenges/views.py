@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse , HttpResponseNotFound , HttpResponseRedirect
+from django.urls import reverse
 
 monthly_challenges = {
     "january": "Eat no meat for the entire month!",
@@ -18,14 +19,23 @@ monthly_challenges = {
 
 # Create your views here.
 
+def index(req):
+   li_str = ""
+   months_list = [*monthly_challenges]
+   for month in months_list:
+      href = reverse("month-challenge",args=[month])
+      li_str += f"<li><a href=\"{month}\">{month.capitalize()}</a></li>"
+   res = f"<ul>{li_str}</ul>"
+   return HttpResponse(res)
 
 
-def numaric_handler(request,month): #my logic lesson 22
+
+def numaric_handler(request,month): #my logic lesson 22 (modren one)
    by_index = [*monthly_challenges]
    
    if(month>len(by_index)):
       
-      return HttpResponseNotFound("this month not found")
+      return HttpResponseNotFound("<h1>This month is not supported!</h1>")
 
    
    else:
@@ -33,6 +43,16 @@ def numaric_handler(request,month): #my logic lesson 22
          
       return HttpResponseRedirect(output)
 
+
+# def monthly_challenge_by_number(request, month): #old solution from lesson 23
+#     months = list(monthly_challenges.keys())
+
+#     if month > len(months):
+#         return HttpResponseNotFound("Invalid month")
+
+#     redirect_month = months[month - 1]
+#     redirect_path = reverse("month-challenge",args=[redirect_month])  # /challenge/january
+#     return HttpResponseRedirect(redirect_path)
 
 
 #from lesson 20
@@ -50,7 +70,10 @@ def numaric_handler(request,month): #my logic lesson 22
 
 def months_handler(req,month):
    try:
-      output = monthly_challenges[month]
-      return HttpResponse(output)
+      path = reverse("challenge-home")
+      response_data = f"""<h1>{monthly_challenges[month]}</h1>
+      <a href=\"{path}\">back to home</a>
+      """
+      return HttpResponse(response_data)
    except:
-      return HttpResponseNotFound("this month not found")
+      return HttpResponseNotFound("<h1>This month is not supported!</h1>")
